@@ -1,7 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1> Hello World </h1>
 {{ api }}
+
+<table class="table table-striped table-hover table-bordered text-center table-sm">
+    <thead>
+    <tr class="table-dark">
+        <th scope="col">Date</th>
+        <th scope="col">Euro (EUR)</th>
+        <th scope="col">Real (BRL)</th>
+        <th scope="col">Yen (JPY)</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for rate in all_rates %}
+    {% if rate.date in date_list%}
+    <tr>
+        <th scope="row">{{ rate.date }}</th>
+        <td>{{ rate.euro }}</td>
+        <td>{{ rate.real }}</td>
+        <td>{{ rate.yen }}</td>
+        <br/>
+    </tr>
+    {% endif %}
+    {% endfor %}
+
+
+    </tbody>
+</table>
 
 {% endblock %}
