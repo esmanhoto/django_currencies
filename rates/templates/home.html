@@ -1,8 +1,49 @@
 {% extends 'base.html' %}
+
+{% block chart %}
+
+<html>
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Day', 'Euro', 'Real', 'Yen'],
+          {% for rate in all_rates %}
+            {% if rate.date in date_list%}
+                ['{{rate.date}}', {{rate.euro}}, {{rate.real}}, {{rate.yen}}],
+            {% endif %}
+          {% endfor %}
+
+        ]);
+
+        var options = {
+          title: 'Currency Ratio to USD',
+          curveType: 'function',
+          legend: { position: 'bottom' },
+          vAxis: { ticks: [1,5,10,30,50,70,90,110,130] }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+
+    </script>
+</head>
+<body>
+<div id="curve_chart" style="width: 900px; height: 500px"></div>
+</body>
+</html>
+
+{% endblock %}
+
 {% block content %}
 
-{{ api }}
-
+<br/>
 <table class="table table-striped table-hover table-bordered text-center table-sm">
     <thead>
     <tr class="table-dark">
@@ -30,3 +71,4 @@
 </table>
 
 {% endblock %}
+
