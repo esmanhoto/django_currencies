@@ -56,8 +56,11 @@ def home(request):
 
                     try:
                         api = json.loads(api_request.content)
-                    except Exception as e:  # todo fix exception clause
-                        api = "Error.."
+                    except json.decoder.JSONDecodeError:
+                        messages.success(request, "There is a problem in the API provided. Please, check the entered "
+                                                  "address.")
+                        return redirect('home')
+
 
                     euro = round(api['rates']['EUR'] / api['rates']['USD'], 4)
                     real = round(api['rates']['BRL'] / api['rates']['USD'], 4)
