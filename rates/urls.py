@@ -3,7 +3,7 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('data', views.RateView)
+router.register('api/rates', views.RateView)
 
 urlpatterns = [
     path('', views.home, name="home"),

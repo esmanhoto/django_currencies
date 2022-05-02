@@ -19,7 +19,7 @@ def home(request):
     date_list = []
     today = date.today()
 
-    while len(date_list) < 6:
+    while len(date_list) < 5:
         if today.isoweekday() < 6:
             date_list.append(today)
         today -= timedelta(days=1)
@@ -61,18 +61,47 @@ def home(request):
                                                   "address.")
                         return redirect('home')
 
-
                     euro = round(api['rates']['EUR'] / api['rates']['USD'], 4)
                     real = round(api['rates']['BRL'] / api['rates']['USD'], 4)
                     yen = round(api['rates']['JPY'] / api['rates']['USD'], 4)
 
-                    rate_data = Rate.objects.get_or_create(date=day, euro=euro, real=real, yen=yen)
+                    Rate.objects.get_or_create(date=day, euro=euro, real=real, yen=yen)
 
         all_rates = Rate.objects.all().order_by('date')
 
-        return render(request, 'home.html', {'all_rates': all_rates, 'date_list': date_list})
+        display_euro = ''
+        for rate in all_rates:
+            if rate.date in date_list:
+                display_euro += rate.euro + ' ,'
+        display_real = ''
+        for rate in all_rates:
+            if rate.date in date_list:
+                display_real += rate.real + ' ,'
+        display_yen = ''
+        for rate in all_rates:
+            if rate.date in date_list:
+                display_yen += rate.yen + ' ,'
+
+        return render(request, 'home.html',
+                      {'all_rates': all_rates, 'date_list': date_list, 'display_euro': display_euro,
+                       'display_real': display_real, 'display_yen': display_yen})
 
     else:
         all_rates = Rate.objects.all().order_by('date')
+
+        display_euro = ''
+        for rate in all_rates:
+            if rate.date in date_list:
+                display_euro += rate.euro + ' ,'
+        display_real = ''
+        for rate in all_rates:
+            if rate.date in date_list:
+                display_real += rate.real + ' ,'
+        display_yen = ''
+        for rate in all_rates:
+            if rate.date in date_list:
+                display_yen += rate.yen + ' ,'
+
         return render(request, 'home.html',
-                      {'all_rates': all_rates, 'date_list': date_list})
+                      {'all_rates': all_rates, 'date_list': date_list, 'display_euro': display_euro,
+                       'display_real': display_real, 'display_yen': display_yen})

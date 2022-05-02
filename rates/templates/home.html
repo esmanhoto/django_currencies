@@ -4,38 +4,85 @@
 
 <html>
 <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Day', 'Euro', 'Real', 'Yen'],
-          {% for rate in all_rates %}
-            {% if rate.date in date_list%}
-                ['{{rate.date}}', {{rate.euro}}, {{rate.real}}, {{rate.yen}}],
-            {% endif %}
-          {% endfor %}
+<!--    HighChart    -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 
-        ]);
-
-        var options = {
-          title: 'Currency Ratio (base: USD)',
-          curveType: 'function',
-          legend: { position: 'bottom' },
-          vAxis: { ticks: [1,5,10,30,50,70,90,110,130] }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-        chart.draw(data, options);
-      }
-
-    </script>
 </head>
 <body>
-<div id="curve_chart" style="width: 1200px; height: 500px"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Highcharts.chart('container', {
+
+    title: {
+        text: 'Currency Ratio'
+    },
+
+    subtitle: {
+        text: '(base: USD)'
+    },
+
+    yAxis: {
+        title: {
+            text: 'Ratio',
+        },
+        floor: 0,
+        ceiling: 140,
+    },
+
+    xAxis: {
+        type: 'text',
+        labels: {
+            enabled:false,
+        }
+    },
+
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+
+    plotOptions: {
+        series: {
+            pointStart: 1,
+            pointInterval: 1,
+            }
+        },
+
+    series: [
+    {
+        name: 'Euro',
+        data: [{{display_euro}}]
+    },
+    {
+        name: 'Real',
+        data: [{{display_real}}]
+    },
+    {
+        name: 'Yen',
+        data: [{{display_yen}}]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                }
+            }
+        }]
+    }
+
+});
+    });
+</script>
+<div id="container" style="width:100%; height:400px;"></div>
 </body>
 </html>
 
@@ -43,7 +90,6 @@
 
 {% block content %}
 
-<br/>
 <table class="table table-striped table-hover table-bordered text-center table-sm">
     <thead>
     <tr class="table-dark">
@@ -69,6 +115,14 @@
 
     </tbody>
 </table>
+
+<br/>
+<h3>To access API rest:</h3>
+<p>"url/api/rates"</p>
+<br/>
+<h3>To view database:</h3>
+<p>"url/admin"</p>
+<p>to access it, log user and admin as 'admin'.</p>
 
 {% endblock %}
 
