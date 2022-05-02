@@ -1,6 +1,14 @@
 from django.shortcuts import render, redirect
 from .models import Rate
 from django.contrib import messages
+from rest_framework import viewsets
+from .serializers import RateSerializer
+
+
+class RateView(viewsets.ModelViewSet):
+    queryset = Rate.objects.all().order_by('date')
+    serializer_class = RateSerializer
+
 
 def home(request):
     import requests
@@ -10,9 +18,8 @@ def home(request):
 
     date_list = []
     today = date.today()
-    period = timedelta(days=1)
 
-    while len(date_list) < 5:
+    while len(date_list) < 6:
         if today.isoweekday() < 6:
             date_list.append(today)
         today -= timedelta(days=1)
@@ -34,7 +41,7 @@ def home(request):
             if date1.isoweekday() < 6:
                 date_list.append(date1)
             while date2 != date1:
-                date1 += period
+                date1 += timedelta(days=1)
                 if date1.isoweekday() < 6:
                     date_list.append(date1)
 
@@ -56,15 +63,13 @@ def home(request):
                     real = round(api['rates']['BRL'] / api['rates']['USD'], 4)
                     yen = round(api['rates']['JPY'] / api['rates']['USD'], 4)
 
-                    rate_test = Rate.objects.get_or_create(date=day, euro=euro, real=real, yen=yen)
+                    rate_data = Rate.objects.get_or_create(date=day, euro=euro, real=real, yen=yen)
 
         all_rates = Rate.objects.all().order_by('date')
 
-        return render(request, 'home.html', {'api': api, 'all_rates': all_rates, 'rate_test': rate_test, 'date1': date1,
-                                             'date_list': date_list})
+        return render(request, 'home.html', {'all_rates': all_rates, 'date_list': date_list})
 
     else:
         all_rates = Rate.objects.all().order_by('date')
         return render(request, 'home.html',
-                      {'initial_date': "Insert initial and final dates (format: yyyy-mm-dd).", 'all_rates': all_rates,
-                       'date_list': date_list})
+                      {'all_rates': all_rates, 'date_list': date_list})
