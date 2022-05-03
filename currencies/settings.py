@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rates',
     'rest_framework',
-    'django-heroku',
 ]
 
 MIDDLEWARE = [
