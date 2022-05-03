@@ -29,6 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'djangocurrencies.herokuapp.com',
+    'localhost',
+    '127.0.0.1',
 ]
 
 
